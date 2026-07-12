@@ -4,10 +4,15 @@ import { Logger } from "./logging";
 import { createServer, getSignalHandler } from "./helpers";
 import { Configration } from "./config";
 import { LocaleManager } from "./locale";
+import { setupOutboundProxy } from "./proxy";
 
 Database.getDbImpl().init(); // initialize database instance
 const config = Configration.get();
 const locales = LocaleManager.get();
+
+// Заворачиваем исходящие запросы к Discord в прокси (xray-туннель),
+// если задан HTTPS_PROXY / ALL_PROXY. Ставим до старта сервера.
+setupOutboundProxy();
 
 logRuntimeInfo(config);
 
